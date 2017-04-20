@@ -20,6 +20,7 @@ package org.apache.cxf.transport.jms.util;
 
 import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -52,8 +53,14 @@ public class MessageListenerTest {
         Queue dest = JMSUtil.createQueue(connection, "test");
 
         MessageListener listenerHandler = new TestMessageListener();
+        ExceptionListener exListener = new ExceptionListener() {
+            
+            @Override
+            public void onException(JMSException exception) {
+            }
+        };
         PollingMessageListenerContainer container = new PollingMessageListenerContainer(connection, dest,
-                                                                                        listenerHandler);
+                                                                                        listenerHandler, exListener);
         container.setTransacted(false);
         container.setAcknowledgeMode(Session.SESSION_TRANSACTED);
 
